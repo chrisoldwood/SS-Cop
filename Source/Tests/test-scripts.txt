@@ -1,0 +1,8 @@
+IsPascalCase.test.sql
+IsCamelCase.test.sql
+IsReservedKeyword.test.sql
+HasSpaces.test.sql
+IsUpperCase.test.sql
+IsLowerCase.test.sql
+Analyse.test.sql
+AnalysisResult.test.sql

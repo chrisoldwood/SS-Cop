@@ -1,0 +1,9 @@
+- Composite, e.g. C# style, C++ style
+
+- Tables with an index
+
+- Exclusion mechansim
+
+- Change 'object'/'name' to 'identifier'
+
+- Rule for no upper case acronyms
