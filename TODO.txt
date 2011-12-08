@@ -7,3 +7,11 @@
 - Change 'object'/'name' to 'identifier'
 
 - Rule for no upper case acronyms
+
+- Detect missing foreign keys by name, eg CustomerId in non Customer table
+
+- Load rules into a table instead of using parameters
+
+- Need interactive/batch mode like SS-Unit (output + raiserror).
+
+- Output rule when violation occurs

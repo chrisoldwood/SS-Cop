@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<title>SS-Copy v0.1 Manual</title>
+<title>SS-Cop v0.1 Manual</title>
 <meta name="author" content="Chris Oldwood">
 <style>
 <!--
@@ -14,13 +14,184 @@ td		{ font-family: Verdana, Arial; font-size: 10pt; border: 1px solid black; ver
 
 <body>
 
-<h3 align="center">SS-Copy v0.1</h3>
+<h3 align="center">SS-Cop v0.1</h3>
 
 <a name="Introduction"></a>
 <h4>Introduction</h4>
 
 <p>
-SS-Cop is a simple database schema analysis tool...
+SS-Cop is a simple database schema analysis tool that casts its eye over your
+tables, procedures and functions to tell you if you've violated your project's
+naming conventions, missed a primary key, etc.
+</p><p>
+The inspiration comes from FxCop which is a free static code analysis tool from
+Microsoft for .Net. I've long been a fan of static code analysis tools although
+they are usually way outside the budget of the non-professional developer.
+</p>
+
+<a name="Installation"></a>
+<h4>Installation</h4>
+
+<p>
+Most tools come with some sort of binaries, but because this is
+SQL based it effectively comes as source code. It is intended that you apply
+it to your baseline database schema and then run a script to invoke the analysis.
+There is a batch file in the <code>Source</code> folder called <code>Install.cmd</code>
+that you can use to load the SS-Cop objects into any database, e.g.
+</p><pre>
+C:\SS-Cop\Source> Install .\SQLEXPRESS Northwind
+</pre><p>
+<b><i>NB: This batch file invokes <code>SQLCMD</code> to run the various .sql scripts and so
+you need to have <code>SQLCMD</code> on your <code>PATH</code>.</i></b>
+</p><p>
+Most likely you will already have your code in some form of Version Control
+System and also have some tool (or batch files) to create your baseline
+database. Because this library comes in source form you can just add it to your
+3rd party area and then either use the supplied batch file or manually integrate it
+into your own build system.
+</p><p>
+The tool uses its own schema 'sscop' and so there should be no conflicts
+between the objects in SS-Cop and your production codebase.
+</p>
+
+<a name="Tutorial"></a>
+<h4>Tutorial</h4>
+
+<p>
+SS-Cop is pretty simple to invoke, you just need to <code>EXECUTE</code> the
+<code>Analyse</code> procedure with the set of rules that you wish to apply,
+e.g.
+</p><pre>
+exec sscop.Analyse @schemaName = 'dbo',
+                   @tableNameRule = 'sscop.IsPascalCase',
+                   @columnNameRule = 'sscop.IsCamelCase',
+                   @procedureNameRule = 'sscop.IsPascalCase',
+                   @functionNameRule = 'sscop.IsPascalCase',
+                   @parameterNameRule = 'sscop.IsCamelCase';
+</pre><p>
+Executing this in SQL Server Management Studio (SSMS) will apply the rules you've
+specified to the relevant objects and generate a result set with any violations
+in it, e.g.
+</p><img src="AnalyseResult.gif"><p>
+Alternatively you can save the query into a SQL script file and run it in batch
+mode with SQLCMD:-
+</p><img src="AnalyseResultConsole.gif">
+
+<a name="NameRules"></a>
+<h4>Naming Rules</h4>
+
+<p>
+The first set of parameters to the Analyse procedure control which of the name
+based rules are executed. You need to supply a rule value if you want that check
+to take place or you can leave the rule defaulted (which is null) to skip it.
+These are the current set of name checks implemented:-
+</p>
+<table id="name_rules">
+<tr>
+<th>Analyse Parameter</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>@tableNameRule</td>
+<td>Checks the name of each table in the specified schema</td>
+</tr>
+<tr>
+<td>@columnNameRule</td>
+<td>Checks the name of each column in every table in the specified schema</td>
+</tr>
+<tr>
+<td>@procedureNameRule</td>
+<td>Checks the name of each stored procedure in the specified schema</td>
+</tr>
+<tr>
+<td>@functionNameRule</td>
+<td>Checks the name of each user-defined function in the specified schema</td>
+</tr>
+<tr>
+<td>@parameterNameRule</td>
+<td>Checks the name of each parameter declared by the stored procedures and
+user-defined functions in the specified schema</td>
+</tr>
+</table>
+<p>
+The naming based rules are just a User-Defined Function that accepts an
+identifier as a <code>sysname</code> and returns a <code>bit</code> result. The
+boolean result is 1 for valid and 0 for invalid. These are the current set of
+built-in naming rules:-
+</p>
+<table id="rule_functions">
+<tr>
+<th>Rule Function</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>IsPascalCase</td>
+<td>Name must start with an upper case letter and only contain upper or lower
+case letters and digits, e.g. CustomerId</td>
+</tr>
+<tr>
+<td>IsCamelCase</td>
+<td>Name must start with a lower case letter and only contain upper or lower
+case letters and digits, e.g. customerId</td>
+</tr>
+<tr>
+<td>IsLowerCase</td>
+<td>Name must only contain lower case letters, digits and underscores to
+separate words, e.g. customer_id</td>
+</tr>
+<tr>
+<td>IsUpperCase</td>
+<td>Name must only contain upper case letters, digits and underscores to
+separate words, e.g. CUSTOMER_ID</td>
+</tr>
+<tr>
+<td>HasSpaces</td>
+<td>Helper function to check if the identifier has spaces in it</td>
+</tr>
+<tr>
+<td>IsReservedKeyword</td>
+<td>Helper function to check if the identifier is a SQL Server reserved keyword</td>
+</tr>
+</table>
+<p>
+All these rules are in the <code>sscop</code> schema (as illustrated in the
+original example). You can of course create your own custom function:-
+</p><pre>
+create function myschema.HasChrisInTheNameAndNoSpaces
+(
+    @identifier sysname
+)
+    returns bit
+as
+begin
+    if (@identifier is null)
+        return null;
+
+    declare @hasSpaces bit = sscop.HasSpaces(@identifier);
+
+    if ( (@hasSpaces = 1) or (@identifier not like '%chris%') )
+        return 0;
+
+    return 1;
+end
+go
+</pre><p>
+As you can see the rules are designed to be composed into more specific ones
+to match your exact naming conventions.
+</p>
+
+<a name="TableKeyRules"></a>
+<h4>Table Key Rules</h4>
+
+<p>
+Not implemented yet...
+</p>
+
+<a name="Exclusions"></a>
+<h4>Excluding Specific Objects</h4>
+
+<p>
+Not implemented yet...
 </p>
 
 <hr>
@@ -42,7 +213,7 @@ Email: <a href="mailto://gort@cix.co.uk">gort@cix.co.uk</a><br>
 Web: <a href="http://www.cix.co.uk/~gort">www.cix.co.uk/~gort</a><br>
 </p><p>
 Chris Oldwood<br>
-29th November 2011<br>
+8th December 2011<br>
 </p>
 
 </body>
