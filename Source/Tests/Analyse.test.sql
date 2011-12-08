@@ -6,7 +6,7 @@
 
 create procedure test._@TestSetUp@_$Analyse$_
 as
-	exec test._@TestTearDown@_$Analyse$_;
+	--exec test._@TestTearDown@_$Analyse$_;
 
 	create table test.Analyse_Result
 	(
