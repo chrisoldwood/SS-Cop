@@ -49,8 +49,8 @@ as
 		exec sscop.AnalyseParameterNames @schemaId, @parameterNameRule;
 
 	-- Format results
-	select	ar.ObjectName		as [ObjectName],
-			ar.FailureReason	as [FailureReason]
+	select	convert(varchar(40), ar.ObjectName)		as [ObjectName],
+			convert(varchar(38), ar.FailureReason)	as [FailureReason]
 	from	sscop.AnalysisResult ar
 	where	ar.HasPassed = 0;
 go
