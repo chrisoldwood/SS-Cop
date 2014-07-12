@@ -1,12 +1,12 @@
 /**
  * \file
- * \brief  Creates the SS-Cop unit test database.
+ * \brief  Creates the SQL-Cop unit test database.
  * \author Chris Oldwood
  */
 
-if (db_id('SSCop_Tests')  is not null)
-	drop database SSCop_Tests;
+if (db_id('SQL_Cop_Tests')  is not null)
+	drop database SQL_Cop_Tests;
 go
 
-create database SSCop_Tests;
+create database SQL_Cop_Tests;
 go

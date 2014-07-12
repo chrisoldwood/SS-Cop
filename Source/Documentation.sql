@@ -9,23 +9,23 @@
  *
  * \section introduction Introduction
  *
- * SS-Cop is a static analysis...
+ * SQL-Cop is a static analysis...
  *
  * \note
- * This documentation was generated directly from the SS-Cop T-SQL source code
+ * This documentation was generated directly from the SQL-Cop T-SQL source code
  * using Doxygen and the sql2doxygen input filter.
- * See <a href="http://www.cix.co.uk/~gort/sql.htm">http://www.cix.co.uk/~gort/sql.htm</a>
+ * See <a href="http://www.chrisoldwood.com/sql.htm">http://www.chrisoldwood.com/sql.htm</a>
  *
  * \note
- * The unit tests for SS-Cop are also written in T-SQL using SS-Unit (SQL Server Unit),
+ * The unit tests for SQL-Cop are also written in T-SQL using SQL-Unit (SQL Server Unit),
  * a T-SQL unit test framework itself written in T-SQL.
- * See <a href="http://www.cix.co.uk/~gort/sql.htm">http://www.cix.co.uk/~gort/sql.htm</a>
+ * See <a href="http://www.chrisoldwood.com/sql.htm">http://www.chrisoldwood.com/sql.htm</a>
  */
 
 /**
  * \namespace sscop
- * \brief     The schema used for all SS-Cop objects.
+ * \brief     The schema used for all SQL-Cop objects.
  *
- * SS-Cop uses its own schema so that its objects will not conflict with your
+ * SQL-Cop uses its own schema so that its objects will not conflict with your
  * application.
  */

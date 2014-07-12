@@ -12,6 +12,6 @@
 
 - Load rules into a table instead of using parameters
 
-- Need interactive/batch mode like SS-Unit (output + raiserror).
+- Need interactive/batch mode like SQL-Unit (output + raiserror).
 
 - Output rule when violation occurs

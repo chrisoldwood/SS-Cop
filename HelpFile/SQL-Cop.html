@@ -1,7 +1,7 @@
 <html>
 
 <head>
-<title>SS-Cop v0.1 Manual</title>
+<title>SQL Server Cop v0.1 Manual</title>
 <meta name="author" content="Chris Oldwood">
 <style>
 <!--
@@ -14,19 +14,25 @@ td		{ font-family: Verdana, Arial; font-size: 10pt; border: 1px solid black; ver
 
 <body>
 
-<h3 align="center">SS-Cop v0.1</h3>
+<h3 align="center">SQL Server Cop v0.1</h3>
 
 <a name="Introduction"></a>
 <h4>Introduction</h4>
 
 <p>
-SS-Cop is a simple database schema analysis tool that casts its eye over your
-tables, procedures and functions to tell you if you've violated your project's
-naming conventions, missed a primary key, etc.
+SQL Server Cop (aka SQL-Cop or SS-Cop*) is a simple database schema analysis
+tool that casts its eye over your tables, procedures and functions to tell you
+if you've violated your project's naming conventions, missed a primary key, etc.
 </p><p>
 The inspiration comes from FxCop which is a free static code analysis tool from
 Microsoft for .Net. I've long been a fan of static code analysis tools although
 they are usually way outside the budget of the non-professional developer.
+</p><p>
+<i>* The unfortunate choice of the original "SS-Cop" abbreviation only came to
+light a couple of years later when I started using the unit test framework in my
+<a href="https://www.youtube.com/watch?v=5-MWYKLM3r0">Test-Driven SQL</a>
+presentation. I have since tried to replace it with "SQL-Cop" where possible
+with only a few key places remaining - the schema names and some URLs.</i>
 </p>
 
 <a name="Installation"></a>
@@ -37,9 +43,9 @@ Most tools come with some sort of binaries, but because this is
 SQL based it effectively comes as source code. It is intended that you apply
 it to your baseline database schema and then run a script to invoke the analysis.
 There is a batch file in the <code>Source</code> folder called <code>Install.cmd</code>
-that you can use to load the SS-Cop objects into any database, e.g.
+that you can use to load the SQL-Cop objects into any database, e.g.
 </p><pre>
-C:\SS-Cop\Source> Install .\SQLEXPRESS Northwind
+C:\SQL-Cop\Source> Install .\SQLEXPRESS Northwind
 </pre><p>
 <b><i>NB: This batch file invokes <code>SQLCMD</code> to run the various .sql scripts and so
 you need to have <code>SQLCMD</code> on your <code>PATH</code>.</i></b>
@@ -51,14 +57,14 @@ database. Because this library comes in source form you can just add it to your
 into your own build system.
 </p><p>
 The tool uses its own schema 'sscop' and so there should be no conflicts
-between the objects in SS-Cop and your production codebase.
+between the objects in SQL-Cop and your production codebase.
 </p>
 
 <a name="Tutorial"></a>
 <h4>Tutorial</h4>
 
 <p>
-SS-Cop is pretty simple to invoke, you just need to <code>EXECUTE</code> the
+SQL-Cop is pretty simple to invoke, you just need to <code>EXECUTE</code> the
 <code>Analyse</code> procedure with the set of rules that you wish to apply,
 e.g.
 </p><pre>

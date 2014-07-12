@@ -1,7 +1,7 @@
 @echo off
 rem ************************************************************
 rem
-rem Build the unit tests database and install the SS-Unit
+rem Build the unit tests database and install the SQL-Unit
 rem framework into it.
 rem
 rem ************************************************************
@@ -36,11 +36,11 @@ for /f "delims=" %%f in (object-scripts.txt) do (
 	)
 )
 
-pushd ..\..\..\SS-Unit\Framework
+pushd ..\..\..\SQL-Unit\Framework
 call Install %server% %database%
 popd
 if errorlevel 1 (
-	echo ERROR: Failed to install SS-Unit [!ERRORLEVEL!]
+	echo ERROR: Failed to install SQL-Unit [!ERRORLEVEL!]
 	exit /b 1
 )
 
@@ -48,7 +48,7 @@ pushd ..
 call Install %server% %database%
 popd
 if errorlevel 1 (
-	echo ERROR: Failed to install SS-Cop [!ERRORLEVEL!]
+	echo ERROR: Failed to install SQL-Cop [!ERRORLEVEL!]
 	exit /b 1
 )
 

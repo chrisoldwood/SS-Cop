@@ -1,7 +1,7 @@
 @echo off
 rem ************************************************************
 rem
-rem Run the SS-Cop unit tests.
+rem Run the SQL-Cop unit tests.
 rem
 rem ************************************************************
 
@@ -16,7 +16,7 @@ if /i "%1" == "" call :usage & exit /b 1
 setlocal
 setlocal enabledelayedexpansion
 set server=%1
-set database=SSCop_Tests
+set database=SQL_Cop_Tests
 set failed=false
 
 :run_tests

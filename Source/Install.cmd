@@ -1,7 +1,7 @@
 @echo off
 rem ************************************************************
 rem
-rem Create the SS-Cop objects inside the specified database.
+rem Create the SQL-Cop objects inside the specified database.
 rem
 rem ************************************************************
 
@@ -21,7 +21,7 @@ set database=%2
 
 echo.
 echo ----------------------------------------
-echo Installing SS-Cop
+echo Installing SQL-Cop
 echo ----------------------------------------
 echo.
 for /f "delims=" %%f in (filelist.txt) do (
