@@ -2,11 +2,13 @@
  * \file
  * \brief  Creates the SQL-Cop unit test database.
  * \author Chris Oldwood
+ * \note   The database name is passed via the -v switch of SQLCMD.
+ *         e.g. sqlcmd -E ... -d master -i CreateDatabase.dbo.sql -v DatabaseName=MyDatabase
  */
 
-if (db_id('SQL_Cop_Tests')  is not null)
-	drop database SQL_Cop_Tests;
+if (db_id('$(DatabaseName)')  is not null)
+	drop database $(DatabaseName);
 go
 
-create database SQL_Cop_Tests;
+create database $(DatabaseName);
 go

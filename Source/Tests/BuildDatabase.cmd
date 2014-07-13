@@ -17,39 +17,72 @@ if /i "%1" == "" call :usage & exit /b 1
 setlocal
 setlocal enabledelayedexpansion
 set server=%1
-set database=SSCop_Tests
+set database=SQL_Cop_Tests
+set usePsInstaller=0
 
+:parse_args
+set arg=%2
+if /i "%2" == "" goto :build_database
+
+:check_db_name
+if /i "%arg:~0,2%" == "--" goto :check_switches
+if /i not "%arg%" == "" set database=%2
+
+:check_switches
+if /i "%arg%" == "--use-ps" set usePsInstaller=1
+
+shift /2
+goto :parse_args
+
+:build_database
 echo.
 echo ----------------------------------------
 echo Creating '%database%' database
 echo ----------------------------------------
 echo.
 
-sqlcmd -E -S %server% -d master -i CreateDatabase.dbo.sql
+sqlcmd -E -S %server% -d master -i CreateDatabase.dbo.sql -v DatabaseName=%database%
+if !errorlevel! neq 0 exit /b !errorlevel!
 
-for /f "delims=" %%f in (object-scripts.txt) do (
-	echo %%f
-	sqlcmd -E -S %server% -d %database% -b -i "%%f"
-	if errorlevel 1 (
-		echo ERROR: Failed to execute SQL script [!ERRORLEVEL!]
-		exit /b 1
+if "%usePsInstaller%" == "0" (
+	for /f "delims=" %%f in (object-scripts.txt) do (
+		echo %%f
+		sqlcmd -E -S %server% -d %database% -b -i "%%f"
+		if !errorlevel! neq 0 (
+			echo ERROR: Failed to execute SQL script [!errorlevel!]
+			exit /b !errorlevel!
+		)
+	)
+) else (
+	PowerShell -File ..\ApplyScripts.ps1 %server% %database% object-scripts.txt
+	if !errorlevel! neq 0 (
+		echo ERROR: Failed to build examples database [!errorlevel!]
+		exit /b !errorlevel!
 	)
 )
 
 pushd ..\..\..\SQL-Unit\Framework
-call Install %server% %database%
+if "%usePsInstaller%" == "0" (
+	call Install %server% %database%
+) else (
+	call Install-ps %server% %database%
+)
 popd
-if errorlevel 1 (
-	echo ERROR: Failed to install SQL-Unit [!ERRORLEVEL!]
-	exit /b 1
+if !errorlevel! neq 0 (
+	echo ERROR: Failed to install SQL-Unit [!errorlevel!]
+	exit /b !errorlevel!
 )
 
 pushd ..
-call Install %server% %database%
+if "%usePsInstaller%" == "0" (
+	call Install %server% %database%
+) else (
+	call Install-ps %server% %database%
+)
 popd
-if errorlevel 1 (
-	echo ERROR: Failed to install SQL-Cop [!ERRORLEVEL!]
-	exit /b 1
+if !errorlevel! neq 0 (
+	echo ERROR: Failed to install SQL-Cop [!errorlevel!]
+	exit /b !errorlevel!
 )
 
 :success
@@ -61,7 +94,10 @@ rem ************************************************************
 
 :usage
 echo.
-echo Usage: %~n0 ^<db server^>
+echo Usage: %~n0 ^<db server^> [^<db name^>] [--use-ps]
 echo.
 echo e.g.   %~n0 .\SQLEXPRESS
+echo        %~n0 .\SQLEXPRESS Tests
+echo.
+echo Note: The default database name is SQL_Cop_Tests.
 goto :eof

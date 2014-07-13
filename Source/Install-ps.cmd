@@ -1,7 +1,9 @@
 @echo off
 rem ************************************************************
 rem
-rem Create the SQL-Cop objects inside the specified database.
+rem Create the SQL-Cop framework objects inside the specified
+rem database . This version uses PowerShell to execute the
+rem scripts.
 rem
 rem ************************************************************
 
@@ -24,13 +26,10 @@ echo ----------------------------------------
 echo Installing SQL-Cop
 echo ----------------------------------------
 echo.
-for /f "delims=" %%f in (filelist.txt) do (
-	echo %%f
-	sqlcmd -E -S %server% -d %database% -b -i "%%f"
-	if !errorlevel! neq 0 (
-		echo ERROR: Failed to execute SQL script [!errorlevel!]
-		exit /b !errorlevel!
-	)
+PowerShell -File ApplyScripts.ps1 %server% %database% filelist.txt
+if !errorlevel! neq 0 (
+	echo ERROR: Failed to install framework [!errorlevel!]
+	exit /b !errorlevel!
 )
 
 :success
